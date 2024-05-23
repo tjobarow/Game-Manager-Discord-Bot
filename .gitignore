@@ -1,0 +1,5 @@
+.env
+/logs/*
+/config/*
+__pycache__/*
+.venv-linux/*
