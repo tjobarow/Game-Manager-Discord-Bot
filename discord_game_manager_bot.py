@@ -22,9 +22,11 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from server_monitor import ServerMonitor
+from discord_game_manager.modules.ServerMonitor import ServerMonitor
+from discord_game_manager.modules.ServerMonitor import ServerMonitorError
 
-load_dotenv("./config/.env")
+load_dotenv("./config/.discord-env")
+load_dotenv("./config/.server-env")
 
 
 description = """An example bot to showcase the discord.ext.commands extension
@@ -50,6 +52,21 @@ async def on_ready():
     print("------")
 
 
+@bot.command("lol")
+async def lol(ctx):
+    lol_msg: str = ("lolo" * 50) + "l"
+    await ctx.send(lol_msg, tts=True)
+
+
+@bot.command("oranges")
+async def oranges(ctx):
+    oranges_str: str = """
+    WHY are all of your Naval Oranges (non organic) from South Africa?! The organic ones are USA...hmmmm... so sick of my food coming from other countries...BUY USA!
+    """
+    await ctx.message.add_reaction("😡")
+    await ctx.send(oranges_str, tts=True)
+
+
 ###################################
 # GAME MANAGER CODE
 ###################################
@@ -60,7 +77,7 @@ async def on_ready():
 def has_a_gamemanager_role():
     def predicate(ctx):
         allowed_roles = [
-            "Bot Manager - View Permission",
+            "Bot Manager - Status Permission",
             "Bot Manager - Restart Permission",
         ]
         if not any(role.name in allowed_roles for role in ctx.author.roles):
@@ -88,7 +105,7 @@ def has_gamemanager_restart_role():
 
 def has_gamemanager_status_role():
     def predicate(ctx):
-        allowed_roles = ["Bot Manager - View Permission"]
+        allowed_roles = ["Bot Manager - Status Permission"]
         if not any(role.name in allowed_roles for role in ctx.author.roles):
             raise commands.MissingRole(f", ".join(allowed_roles))
         print(
@@ -104,7 +121,7 @@ def has_gamemanager_status_role():
 async def gamemanager(ctx):
     if ctx.subcommand_passed is None:
         await help(ctx)
-    elif ctx.subcommand_passed not in gamemanager.commands:
+    elif ctx.subcommand_passed not in gamemanager.all_commands:
         raise commands.CommandNotFound(ctx.subcommand_passed)
 
 
@@ -178,8 +195,8 @@ async def help(ctx):
         !gamemanager restart <process name> - Provide the bot a process name (from !gamemager view) to restart.
     
     Required Permissions:
-        !gamemanager - You must have at least one of the following server roles: Bot Manager - View Permission, Bot Manager - Restart Permission
-        !gamemanager view - You must have the 'Bot Manager - View Permission' server role.
+        !gamemanager - You must have at least one of the following server roles: Bot Manager - Status Permission, Bot Manager - Restart Permission
+        !gamemanager view - You must have the 'Bot Manager - Status Permission' server role.
         !gamemanager restart - You must have the 'Bot Manager - Restart Permission' server role."""
     )
 

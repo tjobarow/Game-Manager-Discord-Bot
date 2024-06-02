@@ -1,5 +1,13 @@
-.env
-/logs/*
-/config/*
+# Ignore env files
+*env
+
+# Ignore certain directories
+logs/*
+config/*
 __pycache__/*
 .venv-linux/*
+.vscode/*
+
+# Ignore certain file types
+*.log
+*.code-workspace
